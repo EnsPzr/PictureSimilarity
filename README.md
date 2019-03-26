@@ -11,7 +11,7 @@ The system works as follows:
   <li>Pixels are compared with other pictures by main picture.</li>
   <li>If the similarity rate is greater than the value you set, the file path and similarity ratio are returned.</li>
 </ul>
-<h3><b><i>NOTE: The less the number of colors in the picture, the greater the success.</i></b></h3>
+<h3><b><i>NOTE: As the color changes to black and white, the success rate is low.</i></b></h3>
 <q>Tr:</q>
 <b>Bu kütüphane birden fazla resim dosyasının basit bir şekilde karşılaştırılması için oluşturulmuştur.</b>
 Parametre olarak bir tane ana resim, karşılaştırılmak istenen resimler ve minimum benzerlik oranını almaktadır.
@@ -24,5 +24,5 @@ Sistem şu şekilde çalışır:
   <li>Pikseller gezilerek ana resim ile diğer resimler karşılaştırılır.</li>
   <li>Benzerlik oranı sizin belirlediğiniz değerden büyük ise geriye dosya yolu ve benzerlik oranı döndürülür.</li>
 </ul>
-<h3><b><i>NOTE: Resimdeki renk sayısı ne kadar az olursa başarı o kadar artar.</i></b></h3>
+<h3><b><i>NOTE: Siyah beyaza çevrilme yapıldığı için renkli resimlerde başarı oranı düşük olmaktadır.</i></b></h3>
 <img src="/anlatim.png" />
