@@ -11,7 +11,7 @@ The system works as follows:
   <li>Pixels are compared with other pictures by main picture.</li>
   <li>If the similarity rate is greater than the value you set, the file path and similarity ratio are returned.</li>
 </ul>
-<h3><b><i>NOTE:The less the number of colors in the picture, the greater the success.</i></b></h3>
+<h3><b><i>NOTE: The less the number of colors in the picture, the greater the success.</i></b></h3>
 <q>Tr:</q>
 <b>Bu kütüphane birden fazla resim dosyasının basit bir şekilde karşılaştırılması için oluşturulmuştur.</b>
 Parametre olarak bir tane ana resim, karşılaştırılmak istenen resimler ve minimum benzerlik oranını almaktadır.
