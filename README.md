@@ -10,4 +10,4 @@ Parametre olarak bir tane ana resim, karşılaştırılmak istenen resimler ve m
 Geriye benzerlik oranı sağlanan resimlerin yollarını ve benzerlik oranlarını döner.
 Aşağıdaki resimde kullanım gösterilmiştir.
 
-<img src="~/anlatim.png" />
+<img src="/anlatim.png" />
