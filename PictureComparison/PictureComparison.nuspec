@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>Picture Similarity</title>
+    <description>This library is written for image comparison operations. Bu kütüphane resim karşılaştırma işlemleri için yazılmıştır.</description>
+    <authors>Mehmet Enes PAZAR</authors>
+    <projectUrl>https://github.com/EnsPzr/PictureSimilarity</projectUrl>
+    <copyright>Copyright 2019</copyright>
+    <license type="file">license.txt</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>Picture Similarity PictureSimilarity Resim Karşılaştırma ResimKarşılaştırma ResimKarsilastirma Karsilastirma</tags>
+    <dependencies>
+      <dependency id="System.Drawing.Common" version="(4.5.1,)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="license\license.txt" target="" />
+  </files>
+  <!-- Optional 'files' node -->
+</package>
