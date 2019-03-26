@@ -9,3 +9,5 @@ Bu kütüphane birden fazla resim dosyasının basit bir şekilde karşılaştı
 Parametre olarak bir tane ana resim, karşılaştırılmak istenen resimler ve minimum benzerlik oranını almaktadır.
 Geriye benzerlik oranı sağlanan resimlerin yollarını ve benzerlik oranlarını döner.
 Aşağıdaki resimde kullanım gösterilmiştir.
+
+<img src="~/anlatim.png" />
