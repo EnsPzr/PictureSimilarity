@@ -10,41 +10,8 @@ namespace PictureComparison
 {
     public static class PictureSimilarity
     {
-        public static Dictionary<string, double> ComparePictures(string mainPicturePath,
-           IEnumerable<string> otherPicturePaths)
-        {
-            try
-            {
-                var picturePaths = otherPicturePaths as string[] ?? otherPicturePaths.ToArray();
-                if (!string.IsNullOrEmpty(mainPicturePath) || picturePaths.Length != 0)
-                {
-                    var result = new Dictionary<string, double>();
-                    var mainPicture = new Bitmap(mainPicturePath);
-                    var mainPictureResized = ResizeImage(mainPicture, mainPicture.Width, mainPicture.Height);
-                    var twoColorMainPicture = ConvertTwoColorPicture(mainPictureResized);
-                    foreach (var otherPicturePath in picturePaths)
-                    {
-                        var otherPicture = new Bitmap(otherPicturePath);
-                        var otherPictureResized = ResizeImage(otherPicture, twoColorMainPicture.Width, twoColorMainPicture.Height);
-                        var twoColorOtherPicture = ConvertTwoColorPicture(otherPictureResized);
-                        var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
-                        var sumBit = twoColorMainPicture.Height * twoColorMainPicture.Width;
-                        result.Add(otherPicturePath, ((double)equalBit / (double)sumBit) * 100);
-                        twoColorOtherPicture.Dispose();
-                        otherPictureResized.Dispose();
-                        otherPicture.Dispose();
-                    }
-                    return result;
-                }
 
-                throw new ArgumentNullException("Parameters cannot be empty!");
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
-
+        //ana resim, diğer resimler ve benzerlik oranı alıp geriye benzerlik oranının üstündeki resimlerin yollarını döndüren metot
         public static List<string> ComparePictures(string mainPicturePath,
             IEnumerable<string> otherPicturePaths, double minSimilarityDifference)
         {
@@ -56,23 +23,16 @@ namespace PictureComparison
                     if (minSimilarityDifference > 0 && minSimilarityDifference <= 100)
                     {
                         var result = new List<string>();
-                        var mainPicture = new Bitmap(mainPicturePath);
-                        var mainPictureResized = ResizeImage(mainPicture, mainPicture.Width, mainPicture.Height);
-                        var twoColorMainPicture = ConvertTwoColorPicture(mainPictureResized);
+                        var twoColorMainPicture = PictureConverted(mainPicturePath, null, null);
                         foreach (var otherPicturePath in picturePaths)
                         {
-                            var otherPicture = new Bitmap(otherPicturePath);
-                            var otherPictureResized = ResizeImage(otherPicture, twoColorMainPicture.Width, twoColorMainPicture.Height);
-                            var twoColorOtherPicture = ConvertTwoColorPicture(otherPictureResized);
+                            var twoColorOtherPicture = PictureConverted(otherPicturePath, twoColorMainPicture.Width, twoColorMainPicture.Height);
                             var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
                             var sumBit = twoColorMainPicture.Height * twoColorMainPicture.Width;
                             if (((double)equalBit / (double)sumBit) * 100 >= minSimilarityDifference)
                             {
                                 result.Add(otherPicturePath);
                             }
-                            twoColorOtherPicture.Dispose();
-                            otherPictureResized.Dispose();
-                            otherPicture.Dispose();
                         }
 
                         return result;
@@ -89,51 +49,115 @@ namespace PictureComparison
             }
         }
 
+        //ana resim ve diğer resimleri alıp benzerlik oranlarını yüzde olarak dictionaryde döndüren metot
+        public static Dictionary<string, double> ComparePictures(string mainPicturePath,
+            IEnumerable<string> otherPicturePaths)
+        {
+            try
+            {
+                var picturePaths = otherPicturePaths as string[] ?? otherPicturePaths.ToArray();
+                if (!string.IsNullOrEmpty(mainPicturePath) || picturePaths.Length != 0)
+                {
+                    var result = new Dictionary<string, double>();
+                    var twoColorMainPicture = PictureConverted(mainPicturePath, null, null);
+                    foreach (var otherPicturePath in picturePaths)
+                    {
+                        var twoColorOtherPicture = PictureConverted(otherPicturePath, twoColorMainPicture.Width, twoColorMainPicture.Height);
+                        var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
+                        var sumBit = twoColorMainPicture.Height * twoColorMainPicture.Width;
+                        result.Add(otherPicturePath, ((double)equalBit / (double)sumBit) * 100);
+                    }
+                    return result;
+                }
+
+                throw new ArgumentNullException("Parameters cannot be empty!");
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        //tüm resimlerin yollarını alıp hangi resmin hangi resme % kaç benzer olduğunu döndüren metot
         public static List<SimilarityRatioModel> ComparePictures(IEnumerable<string> picturesPaths)
         {
-            var otherPictures = picturesPaths as string[] ?? picturesPaths.ToArray();
-            if (otherPictures.Length != 0 && otherPictures.Length > 1)
+            try
             {
-                var result = new List<SimilarityRatioModel>();
-                foreach (var mainPic in otherPictures)
+                var otherPictures = picturesPaths as string[] ?? picturesPaths.ToArray();
+                if (otherPictures.Length != 0 && otherPictures.Length > 1)
                 {
-                    var mainPicture = new Bitmap(mainPic);
-                    var mainPictureResized = ResizeImage(mainPicture, mainPicture.Width, mainPicture.Height);
-                    var twoColorMainPicture = ConvertTwoColorPicture(mainPictureResized);
-                    var sumBit = twoColorMainPicture.Width * twoColorMainPicture.Height;
-                    foreach (var otherPic in otherPictures)
+                    var result = new List<SimilarityRatioModel>();
+                    foreach (var mainPic in otherPictures)
                     {
-                        if (!mainPic.Equals(otherPic))
+                        var twoColorMainPicture = PictureConverted(mainPic, null, null);
+                        var sumBit = twoColorMainPicture.Width * twoColorMainPicture.Height;
+                        foreach (var otherPic in otherPictures)
                         {
-                            if (result.FirstOrDefault(p => p.Img1.Equals(otherPic) && p.Img2.Equals(mainPic)) == null)
+                            if (!mainPic.Equals(otherPic))
                             {
-                                var otherPicture = new Bitmap(otherPic);
-                                var otherPictureResized = ResizeImage(otherPicture, twoColorMainPicture.Width,
-                                    twoColorMainPicture.Height);
-                                var twoColorOtherPicture = ConvertTwoColorPicture(otherPictureResized);
-                                var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
-                                result.Add(new SimilarityRatioModel()
+                                if (result.FirstOrDefault(p => p.Img1.Equals(otherPic) && p.Img2.Equals(mainPic)) == null)
                                 {
-                                    Img1 = mainPic,
-                                    Img2 = otherPic,
-                                    SimilarityRatio = ((double)equalBit / (double)sumBit) * 100
-                                });
-                                twoColorOtherPicture.Dispose();
-                                otherPictureResized.Dispose();
-                                otherPicture.Dispose();;
+                                    var twoColorOtherPicture = PictureConverted(otherPic, twoColorMainPicture.Width, twoColorMainPicture.Height);
+                                    var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
+                                    result.Add(new SimilarityRatioModel()
+                                    {
+                                        Img1 = mainPic,
+                                        Img2 = otherPic,
+                                        SimilarityRatio = ((double)equalBit / (double)sumBit) * 100
+                                    });
+                                    twoColorOtherPicture.Dispose();
+                                }
                             }
                         }
+                        twoColorMainPicture.Dispose();
                     }
-                    twoColorMainPicture.Dispose();
-                    mainPictureResized.Dispose();
-                    mainPicture.Dispose();
+
+                    return result;
+                }
+                throw new Exception("There should be at least two images in the picture paths.");
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        //resim listesi ve min benzerlik oranı alarak benzer olanları string dizi içerisinde döndüren metot.
+        public static List<string[]> ComparePictures(IEnumerable<string> picturesPaths, double minSimilarityDifference)
+        {
+            try
+            {
+                var result = new List<string[]>();
+                foreach (var mainpic in picturesPaths)
+                {
+                    var eklenmismi = false;
+                    foreach (var benz in result)
+                    {
+                        if (benz.Contains(mainpic))
+                        {
+                            eklenmismi = true;
+                            break;
+                        }
+                    }
+                    if (eklenmismi)
+                        continue;
+
+                    var digerleri = picturesPaths.Where(p => p != mainpic).ToArray();
+                    var benzerler = ComparePictures(mainpic, digerleri, minSimilarityDifference).ToList();
+                    if (!benzerler.Any())
+                        continue;
+
+                    benzerler.Insert(0, mainpic);
+
+                    result.Add(benzerler.ToArray());
+
                 }
 
                 return result;
             }
-            else
+            catch (Exception e)
             {
-                throw new Exception("There should be at least two images in the picture paths.");
+                throw new Exception(e.Message);
             }
         }
 
@@ -200,6 +224,22 @@ namespace PictureComparison
             }
 
             return equalBit;
+        }
+
+        private static Bitmap PictureConverted(string path, int? width, int? height)
+        {
+            var picture = new Bitmap(path);
+            Bitmap pictureResized;
+            if (width == null && height == null)
+            {
+                pictureResized = ResizeImage(picture, picture.Width, picture.Height);
+            }
+            else
+            {
+                pictureResized = ResizeImage(picture, width.Value, height.Value);
+            }
+            var twoColorPicture = ConvertTwoColorPicture(pictureResized);
+            return twoColorPicture;
         }
     }
 }
