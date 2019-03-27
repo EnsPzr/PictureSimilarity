@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
+using PictureComparison.Models;
 
 namespace PictureComparison
 {
@@ -85,6 +86,54 @@ namespace PictureComparison
             catch (Exception e)
             {
                 throw new Exception(e.Message);
+            }
+        }
+
+        public static List<SimilarityRatioModel> ComparePictures(IEnumerable<string> picturesPaths)
+        {
+            var otherPictures = picturesPaths as string[] ?? picturesPaths.ToArray();
+            if (otherPictures.Length != 0 && otherPictures.Length > 1)
+            {
+                var result = new List<SimilarityRatioModel>();
+                foreach (var mainPic in otherPictures)
+                {
+                    var mainPicture = new Bitmap(mainPic);
+                    var mainPictureResized = ResizeImage(mainPicture, mainPicture.Width, mainPicture.Height);
+                    var twoColorMainPicture = ConvertTwoColorPicture(mainPictureResized);
+                    var sumBit = twoColorMainPicture.Width * twoColorMainPicture.Height;
+                    foreach (var otherPic in otherPictures)
+                    {
+                        if (!mainPic.Equals(otherPic))
+                        {
+                            if (result.FirstOrDefault(p => p.Img1.Equals(otherPic) && p.Img2.Equals(mainPic)) == null)
+                            {
+                                var otherPicture = new Bitmap(otherPic);
+                                var otherPictureResized = ResizeImage(otherPicture, twoColorMainPicture.Width,
+                                    twoColorMainPicture.Height);
+                                var twoColorOtherPicture = ConvertTwoColorPicture(otherPictureResized);
+                                var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
+                                result.Add(new SimilarityRatioModel()
+                                {
+                                    Img1 = mainPic,
+                                    Img2 = otherPic,
+                                    SimilarityRatio = ((double)equalBit / (double)sumBit) * 100
+                                });
+                                twoColorOtherPicture.Dispose();
+                                otherPictureResized.Dispose();
+                                otherPicture.Dispose();;
+                            }
+                        }
+                    }
+                    twoColorMainPicture.Dispose();
+                    mainPictureResized.Dispose();
+                    mainPicture.Dispose();
+                }
+
+                return result;
+            }
+            else
+            {
+                throw new Exception("There should be at least two images in the picture paths.");
             }
         }
 
