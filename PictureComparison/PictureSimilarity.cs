@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
-using PictureComparison.Models;
 
 namespace PictureComparison
 {
@@ -27,7 +26,19 @@ namespace PictureComparison
                         var otherPicture = new Bitmap(otherPicturePath);
                         var otherPictureResized = ResizeImage(otherPicture, twoColorMainPicture.Width, twoColorMainPicture.Height);
                         var twoColorOtherPicture = ConvertTwoColorPicture(otherPictureResized);
-                        var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
+
+                        var equalBit = 0;
+                        for (var i = 0; i < twoColorMainPicture.Width; i++)
+                        {
+                            for (var j = 0; j < twoColorMainPicture.Height; j++)
+                            {
+                                if (twoColorMainPicture.GetPixel(i, j).Equals(twoColorOtherPicture.GetPixel(i, j)))
+                                {
+                                    equalBit++;
+                                }
+                            }
+                        }
+
                         var sumBit = twoColorMainPicture.Height * twoColorMainPicture.Width;
                         result.Add(otherPicturePath, ((double)equalBit / (double)sumBit) * 100);
                         twoColorOtherPicture.Dispose();
@@ -65,7 +76,19 @@ namespace PictureComparison
                             var otherPicture = new Bitmap(otherPicturePath);
                             var otherPictureResized = ResizeImage(otherPicture, twoColorMainPicture.Width, twoColorMainPicture.Height);
                             var twoColorOtherPicture = ConvertTwoColorPicture(otherPictureResized);
-                            var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
+
+                            var equalBit = 0;
+                            for (var i = 0; i < twoColorMainPicture.Width; i++)
+                            {
+                                for (var j = 0; j < twoColorMainPicture.Height; j++)
+                                {
+                                    if (twoColorMainPicture.GetPixel(i, j).Equals(twoColorOtherPicture.GetPixel(i, j)))
+                                    {
+                                        equalBit++;
+                                    }
+                                }
+                            }
+
                             var sumBit = twoColorMainPicture.Height * twoColorMainPicture.Width;
                             if (((double)equalBit / (double)sumBit) * 100 >= minSimilarityDifference)
                             {
@@ -87,54 +110,6 @@ namespace PictureComparison
             catch (Exception e)
             {
                 throw new Exception(e.Message);
-            }
-        }
-
-        public static List<SimilarityRatioModel> ComparePictures(IEnumerable<string> picturesPaths)
-        {
-            var otherPictures = picturesPaths as string[] ?? picturesPaths.ToArray();
-            if (otherPictures.Length != 0 && otherPictures.Length > 1)
-            {
-                var result = new List<SimilarityRatioModel>();
-                foreach (var mainPic in otherPictures)
-                {
-                    var mainPicture = new Bitmap(mainPic);
-                    var mainPictureResized = ResizeImage(mainPicture, mainPicture.Width, mainPicture.Height);
-                    var twoColorMainPicture = ConvertTwoColorPicture(mainPictureResized);
-                    var sumBit = twoColorMainPicture.Width * twoColorMainPicture.Height;
-                    foreach (var otherPic in otherPictures)
-                    {
-                        if (!mainPic.Equals(otherPic))
-                        {
-                            if (result.FirstOrDefault(p => p.Img1.Equals(otherPic) && p.Img2.Equals(mainPic)) == null)
-                            {
-                                var otherPicture = new Bitmap(otherPic);
-                                var otherPictureResized = ResizeImage(otherPicture, twoColorMainPicture.Width,
-                                    twoColorMainPicture.Height);
-                                var twoColorOtherPicture = ConvertTwoColorPicture(otherPictureResized);
-                                var equalBit = CompareBits(twoColorMainPicture, twoColorOtherPicture);
-                                result.Add(new SimilarityRatioModel()
-                                {
-                                    Img1 = mainPic,
-                                    Img2 = otherPic,
-                                    SimilarityRatio = ((double)equalBit / (double)sumBit) * 100
-                                });
-                                twoColorOtherPicture.Dispose();
-                                otherPictureResized.Dispose();
-                                otherPicture.Dispose();;
-                            }
-                        }
-                    }
-                    twoColorMainPicture.Dispose();
-                    mainPictureResized.Dispose();
-                    mainPicture.Dispose();
-                }
-
-                return result;
-            }
-            else
-            {
-                throw new Exception("There should be at least two images in the picture paths.");
             }
         }
 
@@ -184,23 +159,6 @@ namespace PictureComparison
             }
 
             return twoColorPicture;
-        }
-
-        private static int CompareBits(Bitmap img1, Bitmap img2)
-        {
-            var equalBit = 0;
-            for (var i = 0; i < img1.Width; i++)
-            {
-                for (var j = 0; j < img1.Height; j++)
-                {
-                    if (img1.GetPixel(i, j).Equals(img2.GetPixel(i, j)))
-                    {
-                        equalBit++;
-                    }
-                }
-            }
-
-            return equalBit;
         }
     }
 }

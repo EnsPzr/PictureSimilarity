@@ -4,11 +4,7 @@
     <id>$id$</id>
     <version>$version$</version>
     <title>Picture Similarity</title>
-    <description>
-      This library is written for image comparison operations. Bu kütüphane resim karşılaştırma işlemleri için yazılmıştır.
-      NOTE!!!: Because the black and white of the library is converted to color, its success in color is low.
-      NOT!!!: Kütüphanede siyah beyaza çevirme yapıldığından renkli resimlerdeki başarısı düşüktür.
-    </description>
+    <description>This library is written for image comparison operations. Bu kütüphane resim karşılaştırma işlemleri için yazılmıştır.</description>
     <authors>Mehmet Enes PAZAR</authors>
     <projectUrl>https://github.com/EnsPzr/PictureSimilarity</projectUrl>
     <copyright>Copyright 2019</copyright>
@@ -16,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>Picture Similarity PictureSimilarity Resim Karşılaştırma ResimKarşılaştırma ResimKarsilastirma Karsilastirma</tags>
     <dependencies>
-      <dependency id="System.Drawing.Common" version="4.5.1" />
+      <dependency id="System.Drawing.Common" version="(4.5.1,)" />
     </dependencies>
   </metadata>
   <files>
